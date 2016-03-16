@@ -1,0 +1,7 @@
+{
+  "name": "sRNA mapped to bin",
+  "tagline": "Output bin counts for scram den outputs",
+  "body": "# sRNA_mapped_to_bin\r\n\r\nOutput bin counts for scram den outputs\r\n\r\n<code>bin_output.py [-h] [-i INPUT_FILE] [-o OUTPUT_FILE] [-b BIN]\r\n\r\noptional arguments:\r\n  -h, --help            show this help message and exit\r\n  -i INPUT_FILE, --input_file INPUT_FILE\r\n                        Input File Name\r\n  -o OUTPUT_FILE, --output_file OUTPUT_FILE\r\n                        Output File Name\r\n  -b BIN, --bin BIN     Bin Size</code>\r\n",
+  "google": "",
+  "note": "Don't delete this file! It's used internally to help with page regeneration."
+}
