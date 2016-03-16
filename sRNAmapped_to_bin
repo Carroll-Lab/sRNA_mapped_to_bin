@@ -42,12 +42,13 @@ def bin_output(file_name,outfile,bin_size):
     #add 0 count in final position
     out_list.append((sRNA_bin+1, (((sRNA_bin-1)*bin_size)+bin_size), 
                      (((sRNA_bin-1)*bin_size)+bin_size), 0))
-    print 'bins = {0}'.format(sRNA_bin)
-    print 'total sRNA count = {0}\n'.format(sRNAcount)
-    
+    print'\n'
+    print'-'*50
+    print 'bins = {0}\n'.format(sRNA_bin)
+    print 'total sRNA count = {0}'.format(sRNAcount)
+    print'-'*50
+    print'\n'
     write_to_file(outfile, out_list)
-    
-
 
 def load_mapped_sRNAs(file_name):
     """
@@ -99,7 +100,6 @@ def main():
         parser.add_argument("-b", "--bin", type=int, 
             help = "Bin Size")
         args=parser.parse_args()
-        #return [str(args.input_file),str(args.output_file),int(args.bin)]
         bin_output(args.input_file,args.output_file,args.bin)
 
 if __name__ == "__main__":
