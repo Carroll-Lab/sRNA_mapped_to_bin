@@ -96,7 +96,7 @@ def main():
                 
         parser = argparse.ArgumentParser("bin_output.py")
         parser.add_argument("-i", "--input_file", type=str, 
-            help = "Input File Path - e.g. /path/to/csv/*")
+            help = "Input File Path in quotes - e.g. '/path/to/csv/*'")
         parser.add_argument("-b", "--bin", type=int, 
             help = "Bin Size")
         args=parser.parse_args()
