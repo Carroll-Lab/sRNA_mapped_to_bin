@@ -7,8 +7,9 @@ Created on 16 Mar 2016
 
 import csv
 import argparse
+import glob
 
-def bin_output(file_name,outfile,bin_size):
+def bin_output(file_path, bin_size):
     """
     Makes the start and end values 0 for better looking circos plotting.
     
@@ -18,37 +19,38 @@ def bin_output(file_name,outfile,bin_size):
     Output --> bin_no, start_pos, end_pos, bin_count
     
     """
-
-    sRNA_sorted = load_mapped_sRNAs(file_name)
-
-    sRNAs_in_bin = 0.0
-    out_list=[(0,0,0,0)]
-    sRNAcount=0.0
-    sRNA_bin=1
-    for seq in range(len(sRNA_sorted)):
-        if sRNA_sorted[seq][2] < (sRNA_bin*bin_size):
-            sRNAs_in_bin += abs(sRNA_sorted[seq][1])
-        else:
-            out = (sRNA_bin,(sRNA_bin-1)*bin_size,(sRNA_bin*bin_size)-1,
-                   sRNAs_in_bin)
-            out_list.append(out)
-            sRNAcount +=sRNAs_in_bin
-            sRNAs_in_bin = abs(sRNA_sorted[seq][1])
-            sRNA_bin +=1
-    out = (sRNA_bin,(sRNA_bin-1)*bin_size, sRNA_sorted[-1][2],
-           sRNAs_in_bin)
-    out_list.append(out)
-    sRNAcount +=sRNAs_in_bin
-    #add 0 count in final position
-    out_list.append((sRNA_bin+1, (((sRNA_bin-1)*bin_size)+bin_size), 
-                     (((sRNA_bin-1)*bin_size)+bin_size), 0))
-    print'\n'
-    print'-'*50
-    print 'bins = {0}\n'.format(sRNA_bin)
-    print 'total sRNA count = {0}'.format(sRNAcount)
-    print'-'*50
-    print'\n'
-    write_to_file(outfile, out_list)
+    file_names = glob.glob(file_path)
+    for file_name in file_names:
+        outfile = file_name[:-4]+'_bin.csv'
+        sRNA_sorted = load_mapped_sRNAs(file_name)   
+        sRNAs_in_bin = 0.0
+        out_list=[(0,0,0,0)]
+        sRNAcount=0.0
+        sRNA_bin=1
+        for seq in range(len(sRNA_sorted)):
+            if sRNA_sorted[seq][2] < (sRNA_bin*bin_size):
+                sRNAs_in_bin += abs(sRNA_sorted[seq][1])
+            else:
+                out = (sRNA_bin,(sRNA_bin-1)*bin_size,(sRNA_bin*bin_size)-1,
+                       sRNAs_in_bin)
+                out_list.append(out)
+                sRNAcount +=sRNAs_in_bin
+                sRNAs_in_bin = abs(sRNA_sorted[seq][1])
+                sRNA_bin +=1
+        out = (sRNA_bin,(sRNA_bin-1)*bin_size, sRNA_sorted[-1][2],
+               sRNAs_in_bin)
+        out_list.append(out)
+        sRNAcount +=sRNAs_in_bin
+        #add 0 count in final position
+        out_list.append((sRNA_bin+1, (((sRNA_bin-1)*bin_size)+bin_size), 
+                         (((sRNA_bin-1)*bin_size)+bin_size), 0))
+    #     print'\n'
+    #     print'-'*50
+    #     print 'bins = {0}\n'.format(sRNA_bin)
+    #     print 'total sRNA count = {0}'.format(sRNAcount)
+    #     print'-'*50
+    #     print'\n'
+        write_to_file(outfile, out_list)
 
 def load_mapped_sRNAs(file_name):
     """
@@ -94,13 +96,11 @@ def main():
                 
         parser = argparse.ArgumentParser("bin_output.py")
         parser.add_argument("-i", "--input_file", type=str, 
-            help = "Input File Name")
-        parser.add_argument("-o", "--output_file", type=str, 
-            help = "Output File Name")
+            help = "Input File Path - e.g. /path/to/csv/*")
         parser.add_argument("-b", "--bin", type=int, 
             help = "Bin Size")
         args=parser.parse_args()
-        bin_output(args.input_file,args.output_file,args.bin)
+        bin_output(args.input_file,args.bin)
 
 if __name__ == "__main__":
     main()
