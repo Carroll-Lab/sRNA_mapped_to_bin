@@ -1,87 +1,83 @@
-#!/usr/bin/python
-'''
-Created on 16 Mar 2016
-
-@author: steve
-'''
-
+#!/usr/bin/env python3
 import csv
 import argparse
 import glob
 
+
 def bin_output(file_path, bin_size):
     """
     Makes the start and end values 0 for better looking circos plotting.
-    
+
     TODO:fix for accuracy - currently cuts of the sRNA in position 0 kind of
-    
+
     Input --> sRNA, count, pos
     Output --> bin_no, start_pos, end_pos, bin_count
-    
+
     """
     file_names = glob.glob(file_path)
     for file_name in file_names:
-        outfile = file_name[:-4]+'_bin.csv'
-        sRNA_sorted = load_mapped_sRNAs(file_name)   
+        outfile = file_name[:-4] + '_bin.csv'
+        sRNA_sorted = load_mapped_sRNAs(file_name)
         sRNAs_in_bin = 0.0
-        out_list=[(0,0,0,0)]
-        sRNAcount=0.0
-        sRNA_bin=1
+        out_list = [(0, 0, 0, 0)]
+        sRNAcount = 0.0
+        sRNA_bin = 1
         for seq in range(len(sRNA_sorted)):
-            if sRNA_sorted[seq][2] < (sRNA_bin*bin_size):
+            if sRNA_sorted[seq][2] < (sRNA_bin * bin_size):
                 sRNAs_in_bin += abs(sRNA_sorted[seq][1])
             else:
-                out = (sRNA_bin,(sRNA_bin-1)*bin_size,(sRNA_bin*bin_size)-1,
+                out = (sRNA_bin, (sRNA_bin - 1) * bin_size, (sRNA_bin * bin_size) - 1,
                        sRNAs_in_bin)
                 out_list.append(out)
-                sRNAcount +=sRNAs_in_bin
+                sRNAcount += sRNAs_in_bin
                 sRNAs_in_bin = abs(sRNA_sorted[seq][1])
-                sRNA_bin +=1
-        out = (sRNA_bin,(sRNA_bin-1)*bin_size, sRNA_sorted[-1][2],
+                sRNA_bin += 1
+        out = (sRNA_bin, (sRNA_bin - 1) * bin_size, sRNA_sorted[-1][2],
                sRNAs_in_bin)
         out_list.append(out)
-        sRNAcount +=sRNAs_in_bin
-        #add 0 count in final position
-        out_list.append((sRNA_bin+1, (((sRNA_bin-1)*bin_size)+bin_size), 
-                         (((sRNA_bin-1)*bin_size)+bin_size), 0))
-    #     print'\n'
-    #     print'-'*50
-    #     print 'bins = {0}\n'.format(sRNA_bin)
-    #     print 'total sRNA count = {0}'.format(sRNAcount)
-    #     print'-'*50
-    #     print'\n'
+        sRNAcount += sRNAs_in_bin
+        # add 0 count in final position
+        out_list.append((sRNA_bin + 1, (((sRNA_bin - 1) * bin_size) + bin_size),
+                         (((sRNA_bin - 1) * bin_size) + bin_size), 0))
+        print('\n')
+        print('-' * 50)
+        print('bins = {0}\n'.format(sRNA_bin))
+        print('total sRNA count = {0}'.format(sRNAcount))
+        print('-' * 50)
+        print('\n')
         write_to_file(outfile, out_list)
+
 
 def load_mapped_sRNAs(file_name):
     """
     Load and sort mapped sRNAs from scram output file
     Input --> sRNA,pos,count
-    Return ordered_by_pos [(sRNA, count, pos),] 
-    """ 
-    sRNA_list=[]
-    sRNAmapped = open(file_name, 'rU')
-    first_line=True
+    Return ordered_by_pos [(sRNA, count, pos),]
+    """
+    sRNA_list = []
+    sRNAmapped = open(file_name, 'r')
+    first_line = True
     for line in sRNAmapped:
-        if first_line: 
-            first_line=False
+        if first_line:
+            first_line = False
             pass
         else:
             line = line.strip().split(',')
-            c=(line[0],float(line[2]), int(line[1]))
-            sRNA_list.append(c) 
-    return sorted(sRNA_list, key=lambda sRNA:sRNA[2])
-    
+            c = (line[0], float(line[2]), int(line[1]))
+            sRNA_list.append(c)
+    return sorted(sRNA_list, key=lambda sRNA: sRNA[2])
+
 
 def write_to_file(outfile, out_list):
     """
     Write bin counts to csv in correct format for circos plotting
     ['Bin','Start position','End position','sRNA count']
     """
-    mycsv = csv.writer(open(outfile, 'wb'))    
-    headers = ('Bin','Start position','End position','sRNA count')
+    mycsv = csv.writer(open(outfile, 'w'))
+    headers = ('Bin', 'Start position', 'End position', 'sRNA count')
     mycsv.writerow(headers)
     for i in out_list:
-        row = [i[0],i[1],i[2],i[3]]
+        row = [i[0], i[1], i[2], i[3]]
         mycsv.writerow(row)
 
 def main():
@@ -94,7 +90,7 @@ def main():
         """
     
                 
-        parser = argparse.ArgumentParser("bin_output.py")
+        parser = argparse.ArgumentParser("srna_mapped_to_bin.py")
         parser.add_argument("-i", "--input_file", type=str, 
             help = "Input File Path in quotes - e.g. '/path/to/csv/*'")
         parser.add_argument("-b", "--bin", type=int, 
